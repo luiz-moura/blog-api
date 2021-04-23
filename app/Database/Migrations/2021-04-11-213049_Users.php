@@ -58,7 +58,7 @@ class Users extends Migration
 			],
 			'password'					=> [
 				'type'           		=> 'VARCHAR',
-				'constraint'		 		=> 135,
+				'constraint'		 		=> 270,
 			],
 			'activation_code'	 => [
 				'type'           		=> 'VARCHAR',
