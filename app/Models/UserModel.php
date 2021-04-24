@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use Exception;
 
 class UserModel extends Model
 {
@@ -72,15 +73,14 @@ class UserModel extends Model
     return $data;
   }
 
-  public function findUserByEmailAddress(string $emailAddress)
+  public function findUserByEmail(string $email)
   {
-    $user = $this
-      ->asArray()
-      ->where(['email' => $emailAddress])
-      ->first();
+    $user = $this->where(array('email' => $email))->first();
 
-    if (!$user)
+    if ($user)
       throw new Exception('User does not exist for specified email address');
+
+    unset($user->password);
 
     return $user;
   }

@@ -6,7 +6,8 @@ use Firebase\JWT\JWT;
 
 function getJWTFromRequest($authenticationHeader): string
 {
-  if (is_null($authenticationHeader)) { //JWT is absent
+  if (is_null($authenticationHeader)) //JWT is absent
+  {
     throw new Exception('Missing or invalid JWT in request');
   }
   //JWT is sent from client in the format Bearer XXXXXXXXX
@@ -17,8 +18,11 @@ function validateJWTFromRequest(string $encodedToken)
 {
   $key = Services::getSecretKey();
   $decodedToken = JWT::decode($encodedToken, $key, ['HS256']);
+
   $userModel = new UserModel();
-  $userModel->findUserByEmailAddress($decodedToken->email);
+  $user = $userModel->findUserByEmail($decodedToken->email);
+
+  return $user;
 }
 
 function getSignedJWTForUser(string $email)
@@ -26,6 +30,7 @@ function getSignedJWTForUser(string $email)
   $issuedAtTime = time();
   $tokenTimeToLive = getenv('JWT_TIME_TO_LIVE');
   $tokenExpiration = $issuedAtTime + $tokenTimeToLive;
+
   $payload = [
     'email' => $email,
     'iat' => $issuedAtTime,
