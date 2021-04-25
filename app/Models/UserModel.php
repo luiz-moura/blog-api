@@ -4,11 +4,13 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 use Exception;
+use \Tatter\Relations\Traits\ModelTrait;
 
 class UserModel extends Model
 {
   protected $table      = 'users';
   protected $primaryKey = 'id';
+  protected $with = 'files';
 
   protected $useAutoIncrement = true;
 
@@ -75,12 +77,10 @@ class UserModel extends Model
 
   public function findUserByEmail(string $email)
   {
-    $user = $this->where(array('email' => $email))->first();
+    $user = $this->where(array('email' => $email))->asObject()->first();
 
-    if ($user)
+    if (!$user)
       throw new Exception('User does not exist for specified email address');
-
-    unset($user->password);
 
     return $user;
   }
