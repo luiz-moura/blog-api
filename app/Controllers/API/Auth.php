@@ -74,18 +74,21 @@ class Auth extends \App\Controllers\BaseController
   {
     try {
       $model = new UserModel();
-      $user = $model->findUserByEmailAddress($emailAddress);
-      unset($user['password']);
+      $user = $model->findUserByEmail($emailAddress);
 
       helper('jwt');
 
       return $this->getResponse([
-        'message' => 'User authenticated successfully',
-        'user' => $user,
+        'messages'  => array(
+          'success' => 'User authenticated successfully',
+        ),
+        // 'user' => $user,
         'access_token' => getSignedJWTForUser($emailAddress)
       ]);
-    } catch (Exception $exception) {
-      return $this->getResponse(['error' => $exception->getMessage()],$responseCode);
+    }
+    catch (Exception $exception)
+    {
+      return $this->getResponse(['error' => $exception->getMessage()], $responseCode);
     }
   }
 }
