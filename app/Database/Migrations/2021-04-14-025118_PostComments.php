@@ -57,6 +57,7 @@ class PostComments extends Migration
 			],
 		]);
 		$this->forge->addPrimaryKey('id');
+		$this->forge->addForeignKey('author', 'users', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->addForeignKey('post', 'posts', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->createTable('post_comments');
 	}
