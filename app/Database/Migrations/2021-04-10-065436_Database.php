@@ -8,11 +8,11 @@ class Database extends Migration
 {
 	public function up()
 	{
-		$forge->createDatabase('dashboard', TRUE);
+		$this->forge->createDatabase('dashboard', TRUE);
 	}
 
 	public function down()
 	{
-		$forge->dropDatabase('dashboard');
+		$this->forge->dropDatabase('dashboard');
 	}
 }
