@@ -4,21 +4,18 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 use Exception;
-use \Tatter\Relations\Traits\ModelTrait;
 
 class UserModel extends Model
 {
-  protected $table      = 'users';
-  protected $primaryKey = 'id';
-  protected $with = 'files';
-
-  protected $useAutoIncrement = true;
-
-  protected $returnType     = 'object';
-  protected $useSoftDeletes = true;
-
-  protected $protectFields = true;
-  protected $allowedFields = [
+	protected $DBGroup              = 'default';
+	protected $table                = 'users';
+	protected $primaryKey           = 'id';
+	protected $useAutoIncrement     = true;
+	protected $insertID             = 0;
+	protected $returnType           = 'object';
+	protected $useSoftDelete        = true;
+	protected $protectFields        = true;
+	protected $allowedFields        = [
     'avatar',
     'default_shipping',
     'first_name',
@@ -33,48 +30,51 @@ class UserModel extends Model
     'status',
   ];
 
-  protected $useTimestamps = false;
-  protected $dateFormat    = 'datetime';
-  protected $createdField  = 'created_at';
-  protected $updatedField  = 'updated_at';
-  protected $deletedField  = 'deleted_at';
+	// Dates
+	protected $useTimestamps        = true;
+	protected $dateFormat           = 'datetime';
+	protected $createdField         = 'created_at';
+	protected $updatedField         = 'updated_at';
+	protected $deletedField         = 'deleted_at';
 
-  protected $validationRules  = [
+	// Validation
+	protected $validationRules      = [
     'avatar'            => 'permit_empty|integer',
     'default_shipping'  => 'permit_empty|integer',
-    'first_name'        => 'required|alpha|min_length[3]|max_length[45]',
-    'last_name'         => 'required|alpha|min_length[3]|max_length[45]',
-    'cpf'               => 'required|string',
+    'first_name'        => 'required|string|min_length[2]|max_length[45]',
+    'last_name'         => 'required|string|min_length[2]|max_length[45]',
+    'cpf'               => 'required|string|max_length[20]',
     'birth_date'        => 'required|valid_date',
     'gender'            => 'required|alpha',
-    'phone'             => 'required|alpha_numeric_punct|max_length[20]',
+    'phone'             => 'required|string|max_length[20]',
     'email'             => 'required|valid_email|is_unique[users.email,id,{id}]|max_length[135]',
-    'password'          => 'required|min_length[6]|max_length[135]',
+    'password'          => 'required|string|min_length[6]|max_length[135]',
     'pass_confirm'      => 'required_with[password]|matches[password]',
     'status'            => 'permit_empty|alpha',
   ];
-  protected $skipValidation   = false;
+	protected $validationMessages   = [];
+	protected $skipValidation       = false;
+	protected $cleanValidationRules = true;
 
-  # Password
-  protected $beforeInsert = ['beforeInsert'];
-  protected $beforeUpdate = ['beforeUpdate'];
-
-  protected function beforeInsert(array $data){
-    $data = $this->passwordHash($data);
-    return $data;
-  }
-
-  protected function beforeUpdate(array $data){
-    $data = $this->passwordHash($data);
-    return $data;
-  }
+	// Callbacks
+	protected $allowCallbacks       = true;
+	protected $beforeInsert         = ['passwordHash'];
+	protected $afterInsert          = ['passwordHash'];
+	protected $beforeUpdate         = [];
+	protected $afterUpdate          = [];
+	protected $beforeFind           = [];
+	protected $afterFind            = [];
+	protected $beforeDelete         = [];
+	protected $afterDelete          = [];
 
   protected function passwordHash(array $data){
-    if(isset($data['data']['password']))
+    if (isset($data['data']['password']))
       $data['data']['password'] = password_hash($data['data']['password'], PASSWORD_BCRYPT);
+
     return $data;
   }
 
+  // Custom
   public function findUserByEmail(string $email)
   {
     $user = $this->where(array('email' => $email))->asObject()->first();

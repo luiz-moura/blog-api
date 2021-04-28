@@ -6,28 +6,42 @@ use CodeIgniter\Model;
 
 class MenuModel extends Model
 {
-  protected $table      = 'menus';
-  protected $primaryKey = 'id';
+	protected $DBGroup              = 'default';
+	protected $table                = 'menus';
+	protected $primaryKey           = 'id';
+	protected $useAutoIncrement     = true;
+	protected $insertID             = 0;
+	protected $returnType           = 'object';
+	protected $useSoftDelete        = true;
+	protected $protectFields        = true;
+	protected $allowedFields        = ['title', 'position', 'sequence', 'status'];
 
-  protected $useAutoIncrement = true;
+	// Dates
+	protected $useTimestamps        = true;
+	protected $dateFormat           = 'datetime';
+	protected $createdField         = 'created_at';
+	protected $updatedField         = 'updated_at';
+	protected $deletedField         = 'deleted_at';
 
-  protected $returnType     = 'object';
-  protected $useSoftDeletes = true;
-
-  protected $protectFields = true;
-  protected $allowedFields = ['title', 'position', 'sequence', 'status'];
-
-  protected $useTimestamps = false;
-  protected $dateFormat    = 'datetime';
-  protected $createdField  = 'created_at';
-  protected $updatedField  = 'updated_at';
-  protected $deletedField  = 'deleted_at';
-
-  protected $validationRules  = [
-    'title'       => 'required|string',
+	// Validation
+	protected $validationRules      = [
+    'title'       => 'required|string|max_length[135]',
     'position'    => 'required|alpha',
     'sequence'    => 'required|integer',
     'status'      => 'required|alpha',
   ];
-  protected $skipValidation   = false;
+	protected $validationMessages   = [];
+	protected $skipValidation       = false;
+	protected $cleanValidationRules = true;
+
+	// Callbacks
+	protected $allowCallbacks       = true;
+	protected $beforeInsert         = [];
+	protected $afterInsert          = [];
+	protected $beforeUpdate         = [];
+	protected $afterUpdate          = [];
+	protected $beforeFind           = [];
+	protected $afterFind            = [];
+	protected $beforeDelete         = [];
+	protected $afterDelete          = [];
 }

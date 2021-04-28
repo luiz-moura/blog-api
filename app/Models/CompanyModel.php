@@ -6,25 +6,41 @@ use CodeIgniter\Model;
 
 class CompanyModel extends Model
 {
-  protected $table      = 'company';
-  protected $primaryKey = 'id';
+	protected $DBGroup              = 'default';
+	protected $table                = 'companies';
+	protected $primaryKey           = 'id';
+	protected $useAutoIncrement     = true;
+	protected $insertID             = 0;
+	protected $returnType           = 'object';
+	protected $useSoftDelete        = true;
+	protected $protectFields        = true;
+	protected $allowedFields        = ['name', 'description', 'email'];
 
-  protected $useAutoIncrement = true;
+	// Dates
+	protected $useTimestamps        = true;
+	protected $dateFormat           = 'datetime';
+	protected $createdField         = 'created_at';
+	protected $updatedField         = 'updated_at';
+	protected $deletedField         = 'deleted_at';
 
-  protected $returnType     = 'object';
-  protected $useSoftDeletes = false;
-
-  protected $protectFields = true;
-  protected $allowedFields = ['name', 'description'];
-
-  protected $useTimestamps = false;
-  protected $dateFormat    = 'datetime';
-  protected $createdField  = 'created_at';
-  protected $updatedField  = 'updated_at';
-
-  protected $validationRules  = [
-    'name'          => 'required|string',
-    'description'   => 'required|string',
+	// Validation
+	protected $validationRules      = [
+    'name'            => 'required|string|max_length[135]',
+    'description'     => 'required|string|max_length[540]',
+    'email'           => 'required|valid_email|is_unique[users.email,id,{id}]|max_length[135]',
   ];
-  protected $skipValidation   = false;
+	protected $validationMessages   = [];
+	protected $skipValidation       = false;
+	protected $cleanValidationRules = true;
+
+	// Callbacks
+	protected $allowCallbacks       = true;
+	protected $beforeInsert         = [];
+	protected $afterInsert          = [];
+	protected $beforeUpdate         = [];
+	protected $afterUpdate          = [];
+	protected $beforeFind           = [];
+	protected $afterFind            = [];
+	protected $beforeDelete         = [];
+	protected $afterDelete          = [];
 }

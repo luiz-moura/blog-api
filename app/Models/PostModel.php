@@ -6,16 +6,15 @@ use CodeIgniter\Model;
 
 class PostModel extends Model
 {
-  protected $table      = 'posts';
-  protected $primaryKey = 'id';
-
-  protected $useAutoIncrement = true;
-
-  protected $returnType     = 'object';
-  protected $useSoftDeletes = true;
-
-  protected $protectFields = true;
-  protected $allowedFields = [
+	protected $DBGroup              = 'default';
+	protected $table                = 'posts';
+	protected $primaryKey           = 'id';
+	protected $useAutoIncrement     = true;
+	protected $insertID             = 0;
+	protected $returnType           = 'object';
+	protected $useSoftDelete        = true;
+	protected $protectFields        = true;
+	protected $allowedFields        = [
     'image',
     'author',
     'title',
@@ -28,13 +27,15 @@ class PostModel extends Model
     'status',
   ];
 
-  protected $useTimestamps = false;
-  protected $dateFormat    = 'datetime';
-  protected $createdField  = 'created_at';
-  protected $updatedField  = 'updated_at';
-  protected $deletedField  = 'deleted_at';
+	// Dates
+	protected $useTimestamps        = true;
+	protected $dateFormat           = 'datetime';
+	protected $createdField         = 'created_at';
+	protected $updatedField         = 'updated_at';
+	protected $deletedField         = 'deleted_at';
 
-  protected $validationRules  = [
+	// Validation
+	protected $validationRules      = [
     'image'           => 'permit_empty|integer',
     'author'          => 'required|integer',
     'title'           => 'required|string|max_length[270]',
@@ -43,8 +44,21 @@ class PostModel extends Model
     'content'         => 'permit_empty|string',
     'comments_status' => 'permit_empty|alpha',
     'type'            => 'permit_empty|alpha',
-    'slug'            => 'required|alpha_dash|is_unique[posts.slug,id,{id}]',
+    'slug'            => 'required|alpha_dash|is_unique[posts.slug,id,{id}]|max_length[135]',
     'status'          => 'permit_empty|alpha',
   ];
-  protected $skipValidation   = false;
+	protected $validationMessages   = [];
+	protected $skipValidation       = false;
+	protected $cleanValidationRules = true;
+
+	// Callbacks
+	protected $allowCallbacks       = true;
+	protected $beforeInsert         = [];
+	protected $afterInsert          = [];
+	protected $beforeUpdate         = [];
+	protected $afterUpdate          = [];
+	protected $beforeFind           = [];
+	protected $afterFind            = [];
+	protected $beforeDelete         = [];
+	protected $afterDelete          = [];
 }

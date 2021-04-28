@@ -4,17 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class StateModel extends Model
+class PostTagModel extends Model
 {
 	protected $DBGroup              = 'default';
-	protected $table                = 'states';
+	protected $table                = 'post_tags';
 	protected $primaryKey           = 'id';
 	protected $useAutoIncrement     = true;
 	protected $insertID             = 0;
 	protected $returnType           = 'object';
 	protected $useSoftDelete        = true;
 	protected $protectFields        = true;
-	protected $allowedFields        = ['country', 'name', 'initials', 'status'];
+	protected $allowedFields        = ['name', 'description', 'slug', 'status'];
 
 	// Dates
 	protected $useTimestamps        = true;
@@ -25,9 +25,9 @@ class StateModel extends Model
 
 	// Validation
 	protected $validationRules      = [
-    'country'         => 'required|string',
-    'name'            => 'required|string',
-    'initials'        => 'required|alpha_numeric|max_length[3]',
+    'name'            => 'required|string|max_length[45]',
+    'description'     => 'required|string|max_length[90]',
+    'slug'            => 'required|alpha_dash|is_unique[post_tags.slug,id,{id}|max_length[135]',
     'status'          => 'permit_empty|alpha',
   ];
 	protected $validationMessages   = [];
