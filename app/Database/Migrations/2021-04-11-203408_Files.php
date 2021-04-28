@@ -21,7 +21,7 @@ class Files extends Migration
 			],
       'path'				=> [
 				'type'           		=> 'VARCHAR',
-				'constraint'     		=> 260,
+				'constraint'     		=> 270,
         'unique'         		=> true,
 			],
 			'created_at'	=> [
