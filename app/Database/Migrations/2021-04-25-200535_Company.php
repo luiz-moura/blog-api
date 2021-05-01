@@ -23,6 +23,11 @@ class Company extends Migration
 				'type'            =>'VARCHAR',
 				'constraint'     		=> 45,
 			],
+      'email'							=> [
+				'type'           		=> 'VARCHAR',
+				'constraint'		 		=> 135,
+				'unique'         		=> true,
+			],
 			'created_at'				=> [
 				'type'							=> 'DATETIME',
 			],

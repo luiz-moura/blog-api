@@ -27,7 +27,7 @@ class CompanyModel extends Model
 	protected $validationRules      = [
     'name'            => 'required|string|max_length[135]',
     'description'     => 'required|string|max_length[540]',
-    'email'           => 'required|valid_email|is_unique[users.email,id,{id}]|max_length[135]',
+    'email'           => 'required|valid_email|is_unique[companies.email,id,{id}]|max_length[135]',
   ];
 	protected $validationMessages   = [];
 	protected $skipValidation       = false;
