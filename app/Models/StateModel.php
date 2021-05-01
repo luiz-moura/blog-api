@@ -25,9 +25,9 @@ class StateModel extends Model
 
 	// Validation
 	protected $validationRules      = [
-    'country'         => 'required|string',
-    'name'            => 'required|string',
-    'initials'        => 'required|alpha_numeric|max_length[3]',
+    'country'         => 'required',
+    'name'            => 'required',
+    'initials'        => 'required',
     'status'          => 'permit_empty|alpha',
   ];
 	protected $validationMessages   = [];

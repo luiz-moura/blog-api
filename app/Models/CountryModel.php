@@ -31,10 +31,10 @@ class CountryModel extends Model
 
 	// Validation
 	protected $validationRules      = [
-    'name'            => 'required|string|max_length[90]',
-    'initials'        => 'required|string|max_length[2]',
-    'initials_three'  => 'required|string|max_length[3]',
-    'code'            => 'required|alpha_numeric|max_length[5]',
+    'name'            => 'required',
+    'initials'        => 'required',
+    'initials_three'  => 'required',
+    'code'            => 'required',
     'status'          => 'permit_empty|alpha',
   ];
 	protected $validationMessages   = [];

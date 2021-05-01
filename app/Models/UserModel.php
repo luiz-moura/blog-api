@@ -16,6 +16,7 @@ class UserModel extends Model
 	protected $useSoftDelete        = true;
 	protected $protectFields        = true;
 	protected $allowedFields        = [
+    'role',
     'avatar',
     'default_shipping',
     'first_name',
@@ -39,15 +40,17 @@ class UserModel extends Model
 
 	// Validation
 	protected $validationRules      = [
+    'role'              => 'required|integer',
     'avatar'            => 'permit_empty|integer',
     'default_shipping'  => 'permit_empty|integer',
     'first_name'        => 'required|string|min_length[2]|max_length[45]',
     'last_name'         => 'required|string|min_length[2]|max_length[45]',
-    'cpf'               => 'required|string|max_length[20]',
-    'birth_date'        => 'required|valid_date',
-    'gender'            => 'required|alpha',
-    'phone'             => 'required|string|max_length[20]',
+    'cpf'               => 'required|string|is_unique[users.cpf,id,{id}]|max_length[20]',
+    'birth_date'        => 'permit_empty|valid_date',
+    'gender'            => 'permit_empty|alpha',
+    'phone'             => 'permit_empty|string|max_length[20]',
     'email'             => 'required|valid_email|is_unique[users.email,id,{id}]|max_length[135]',
+    'activation_code'   => 'permit_empty|string|max_length[135]',
     'password'          => 'required|string|min_length[6]|max_length[135]',
     'pass_confirm'      => 'required_with[password]|matches[password]',
     'status'            => 'permit_empty|alpha',
@@ -58,21 +61,38 @@ class UserModel extends Model
 
 	// Callbacks
 	protected $allowCallbacks       = true;
-	protected $beforeInsert         = ['passwordHash'];
-	protected $afterInsert          = ['passwordHash'];
-	protected $beforeUpdate         = [];
+	protected $beforeInsert         = ['beforeInsert'];
+	protected $afterInsert          = [];
+	protected $beforeUpdate         = ['beforeUpdate'];
 	protected $afterUpdate          = [];
 	protected $beforeFind           = [];
 	protected $afterFind            = [];
 	protected $beforeDelete         = [];
 	protected $afterDelete          = [];
 
-  protected function passwordHash(array $data){
-    if (isset($data['data']['password']))
-      $data['data']['password'] = password_hash($data['data']['password'], PASSWORD_BCRYPT);
+  protected function beforeInsert(array $data): array
+    {
+        return $this->getUpdatedDataWithHashedPassword($data);
+    }
 
-    return $data;
-  }
+    protected function beforeUpdate(array $data): array
+    {
+        return $this->getUpdatedDataWithHashedPassword($data);
+    }
+
+    private function getUpdatedDataWithHashedPassword(array $data): array
+    {
+        if (isset($data['data']['password'])) {
+            $plaintextPassword = $data['data']['password'];
+            $data['data']['password'] = $this->hashPassword($plaintextPassword);
+        }
+        return $data;
+    }
+
+    private function hashPassword(string $plaintextPassword): string
+    {
+        return password_hash($plaintextPassword, PASSWORD_BCRYPT);
+    }
 
   // Custom
   public function findUserByEmail(string $email)
