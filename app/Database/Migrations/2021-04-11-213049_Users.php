@@ -15,6 +15,12 @@ class Users extends Migration
 				'unsigned'       		=> true,
 				'auto_increment' 		=> true,
 			],
+      'role'						=> [
+				'type'           		=> 'INT',
+				'constraint'     		=> 5,
+				'unsigned'       		=> true,
+        'null'              => true,
+			],
 			'avatar'						=> [
 				'type'           		=> 'INT',
 				'constraint'     		=> 5,
@@ -82,6 +88,7 @@ class Users extends Migration
 			],
 		]);
 		$this->forge->addPrimaryKey('id');
+		$this->forge->addForeignKey('role', 'roles', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->addForeignKey('avatar', 'files', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->addForeignKey('default_shipping', 'adresses', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->createTable('users');
