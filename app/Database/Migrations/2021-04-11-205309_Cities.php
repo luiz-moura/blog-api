@@ -22,7 +22,7 @@ class Cities extends Migration
 			],
 			'name'				=> [
 				'type'						=> 'VARCHAR',
-				'constraint'			=> 45,
+				'constraint'			=> 90,
 			],
 			'status'			=> [
 				'type'						=> 'ENUM',
@@ -34,6 +34,10 @@ class Cities extends Migration
 			],
 			'updated_at'	=> [
 				'type'						=> 'DATETIME',
+			],
+      'deleted_at'	=> [
+				'type'						=> 'DATETIME',
+        'null'           	=> true,
 			],
 		]);
 		$this->forge->addPrimaryKey('id');

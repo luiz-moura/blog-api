@@ -22,7 +22,7 @@ class States extends Migration
 			],
 			'name'				=> [
 				'type'						=> 'VARCHAR',
-				'constraint'			=> 45,
+				'constraint'			=> 90,
 			],
 			'initials'		=> [
 				'type'						=> 'VARCHAR',
@@ -38,6 +38,10 @@ class States extends Migration
 			],
 			'updated_at'	=> [
 				'type'						=> 'DATETIME',
+			],
+      'deleted_at'	=> [
+				'type'						=> 'DATETIME',
+        'null'           	=> true,
 			],
 		]);
 		$this->forge->addPrimaryKey('id');

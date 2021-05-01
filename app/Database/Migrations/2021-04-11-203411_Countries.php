@@ -18,22 +18,22 @@ class Countries extends Migration
 			'name'				=> [
 				'type'						=> 'VARCHAR',
 				'constraint'			=> 90,
-        'unique'         		=> true,
+        'unique'         	=> true,
 			],
 			'initials'		=> [
 				'type'						=> 'VARCHAR',
 				'constraint'			=> 2,
-        'unique'         		=> true,
+        'unique'         	=> true,
 			],
       'initials_three'		=> [
 				'type'						=> 'VARCHAR',
 				'constraint'			=> 3,
-        'unique'         		=> true,
+        'unique'         	=> true,
 			],
       'code'		    => [
 				'type'						=> 'VARCHAR',
 				'constraint'			=> 5,
-        'unique'         		=> true,
+        'unique'         	=> true,
 			],
 			'status'			=> [
 				'type'						=> 'ENUM',
@@ -45,6 +45,10 @@ class Countries extends Migration
 			],
 			'updated_at'	=> [
 				'type'						=> 'DATETIME',
+			],
+      'deleted_at'	=> [
+				'type'						=> 'DATETIME',
+        'null'           	=> true,
 			],
 		]);
 		$this->forge->addPrimaryKey('id');
