@@ -25,8 +25,8 @@ class FileModel extends Model
 
 	// Validation
 	protected $validationRules      = [
-    'path' => 'required|string|is_unique[files.path,id,{id}]|max_length[45]',
-    'name' => 'required|string|min_length[3]|max_length[270]',
+    'path' => 'required|string|is_unique[files.path,id,{id}]|max_length[270]',
+    'name' => 'required|string|min_length[3]|max_length[45]',
   ];
 	protected $validationMessages   = [];
 	protected $skipValidation       = false;

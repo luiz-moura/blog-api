@@ -27,7 +27,7 @@ class PostTagModel extends Model
 	protected $validationRules      = [
     'name'            => 'required|string|max_length[45]',
     'description'     => 'required|string|max_length[90]',
-    'slug'            => 'required|alpha_dash|is_unique[post_tags.slug,id,{id}|max_length[135]',
+    'slug'            => 'required|alpha_dash|is_unique[post_tags.slug,id,{id}|max_length[135]]',
     'status'          => 'permit_empty|alpha',
   ];
 	protected $validationMessages   = [];

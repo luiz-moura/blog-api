@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PostHasTag extends Model
+class PostHasTagModel extends Model
 {
 	protected $DBGroup              = 'default';
 	protected $table                = 'post_has_tags';
@@ -17,7 +17,7 @@ class PostHasTag extends Model
 	protected $allowedFields        = ['post', 'tag'];
 
 	// Dates
-	protected $useTimestamps        = false;
+	protected $useTimestamps        = true;
 	protected $dateFormat           = 'datetime';
 	protected $createdField         = 'created_at';
 	protected $updatedField         = 'updated_at';

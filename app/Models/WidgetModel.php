@@ -34,7 +34,7 @@ class WidgetModel extends Model
 	protected $validationRules      = [
     'title'           => 'required|string|max_length[135]',
     'content'         => 'permit_empty|string',
-    'type'            => 'required|alpha',
+    'type'            => 'required|alpha_numeric',
     'position'        => 'required|alpha',
     'sequence'        => 'required|integer',
     'status'          => 'required|alpha',

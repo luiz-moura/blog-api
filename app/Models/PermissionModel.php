@@ -34,7 +34,7 @@ class PermissionModel extends Model
 	// Validation
 	protected $validationRules      = [
     'role'            => 'required|integer',
-    'name'            => 'required|string|min_length[3]|max_length[45]',
+    'name'            => 'required|string|is_unique[permissions.name,id,{id}]|min_length[3]|max_length[45]',
     'allowed'         => 'permit_empty|integer',
     'create'          => 'permit_empty|integer',
     'read'            => 'permit_empty|integer',
