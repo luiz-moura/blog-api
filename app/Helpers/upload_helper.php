@@ -2,22 +2,25 @@
 
 use Config\Services;
 
-function upload($file) : string
+function upload($file)
 {
-  helper(['form', 'url']);
+  // helper(['form', 'url']);
 
-  $input = $this->validate([
-    'file' => [
-      'uploaded[file]',
-      'mime_in[file,image/jpg,image/jpeg,image/png]',
-      'max_size[file,1024]',
-    ],
-  ]);
+  // $validated = $this->validate([
+  //   'file' => [
+  //     'uploaded[file]',
+  //     'mime_in[file,image/jpg,image/jpeg,image/gif,image/png]',
+  //     'max_size[file,1024]',
+  //   ],
+  // ]);
 
-  if (!$input)
+  // if (!$validated)
+  //   throw new Exception('Missing or invalid File in request');
+
+  if (is_null($file))
     throw new Exception('Missing or invalid File in request');
 
-  if ($file->isValid() && ! $file->hasMoved()) {
+  if ($file->isValid() && !$file->hasMoved()) {
     // Get file name and extension
     $name = $file->getName();
     $ext = $file->getClientExtension();
@@ -26,7 +29,7 @@ function upload($file) : string
     // Store file in public/uploads/ folder
     $file->move('../public/uploads', $newName);
     // File path to display preview
-    $filepath = base_url()."/uploads/".$newName;
+    $filepath = 'uploads/' . $newName;
 
     return $filepath;
   }
