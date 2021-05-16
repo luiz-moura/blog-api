@@ -20,6 +20,7 @@ class Account extends ResourceController
 
     $this->model->update($user->id, $activationCode);
 
+    # Send email
     $subject = '🚀 Confirmação de e-mail - AnyCode';
     $url = base_url('api/account/confirm-email/' . $hashCode);
     $message = 'Clique no link abaixo para confirmar seu email </br> ' . $url;
@@ -47,8 +48,10 @@ class Account extends ResourceController
       return $this->fail('Incorrect code');
 
     $user->status = 'active';
+
     $this->model->save($user);
 
+    # Send email
     $subject = 'E-mail validado com sucesso - AnyCode';
     $message = 'Obrigado por validar o seu email </br> ';
     sendEmail($user->email, $subject, $message);
@@ -69,20 +72,21 @@ class Account extends ResourceController
 
     $body = $this->request->getJSON();
     $user = $this->model->findUserByEmail($body->email);
+    $hashCode = random_string('alnum', 16);
 
     if (!$user)
       return $this->failNotFound('No data found');
 
-    $hashCode = random_string('alnum', 16);
     $recovery = [
       'code'        => $hashCode,
       'user'        => $user->id,
-      'expiration'  => date("Y-m-d H:m:s", strtotime("+1 week")),
+      'expiration'  => date('Y-m-d H:m:s', strtotime('+1 week')),
     ];
 
     $recoveryModel = new RecoveryCodeModel();
     $recoveryModel->insert($recovery);
 
+    # Send email
     $subject = '🚀 Recuperação de conta - AnyCode';
     $url = base_url('api/account/confirm-email/' . $hashCode);
     $message = 'Clique no link abaixo para alterar sua senha' . $url;
@@ -113,15 +117,14 @@ class Account extends ResourceController
     if (!$user)
       return $this->failNotFound('No data found');
 
-    $body = $this->request->getJSON();
-    $password = $body->password;
+    $user->password = $body->password;
 
-    $user->password = $password;
     $this->model->save($user);
 
     $recovery->status = 'inactive';
     $recoveryModel->save($recovery);
 
+    # Send email
     $subject = '🚀 Senha Alterada - AnyCode';
     $message = 'Senha alterada com sucesso';
     sendEmail($user->email, $subject, $message);

@@ -11,7 +11,7 @@ class Address extends ResourceController
 
   public function index()
   {
-    $data = $this->model->paginate(10);
+    $data = $this->model->paginate($limit = 10);
     $pager = $this->model->pager;
 
     if (!$data)
@@ -23,8 +23,13 @@ class Address extends ResourceController
       'messages'  => array(
         'success' => 'OK'
       ),
+      'meta'      => array(
+        'current-page'  => $pager->getCurrentPage(),
+        'per-page'      => $limit,
+        'total'         => $pager->getTotal(),
+        'last-page'     => $pager->getPageCount(),
+      ),
       'data'      => $data,
-      'pager'     => $pager,
     );
 
     return $this->respond($response);
@@ -53,26 +58,21 @@ class Address extends ResourceController
   {
     $body = $this->request->getJSON();
 
-    if ($this->model->insert($body))  # Validation successfully
-    {
-      $data = array('id' => $this->model->getInsertID());
+    if (!$this->model->insert($body))
+      return $this->fail($this->model->errors());
 
-      $response = array(
-        'status'    => 201,
-        'error'     => false,
-        'messages'  => array(
-          'success' => 'Successfully created'
-        ),
-        'data'      => $data,
-      );
+    $data = array('id' => $this->model->getInsertID());
 
-      return $this->respondCreated($response);
-    }
-    else # Validation fail
-    {
-      $errors = $this->model->errors();
-      return $this->fail($errors);
-    }
+    $response = array(
+      'status'    => 201,
+      'error'     => false,
+      'messages'  => array(
+        'success' => 'Successfully created'
+      ),
+      'data'      => $data,
+    );
+
+    return $this->respondCreated($response);
   }
 
   public function update($id = null)
@@ -85,23 +85,18 @@ class Address extends ResourceController
     $body = $this->request->getJSON();
     $body->id = $id;
 
-    if ($this->model->save($body)) # Validation successfully
-    {
-      $response = array(
-        'status'    => 200,
-        'error'     => false,
-        'messages'  => array(
-          'success' => 'Successfully updated'
-        ),
-      );
+    if (!$this->model->save($body))
+      return $this->fail($this->model->errors());
 
-      return $this->respond($response);
-    }
-    else # Validation fail
-    {
-      $errors = $this->model->errors();
-      return $this->fail($errors);
-    }
+    $response = array(
+      'status'    => 200,
+      'error'     => false,
+      'messages'  => array(
+        'success' => 'Successfully updated'
+      ),
+    );
+
+    return $this->respond($response);
   }
 
   public function delete($id = null)

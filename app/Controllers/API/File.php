@@ -11,7 +11,7 @@ class File extends ResourceController
 
   public function index()
   {
-    $data = $this->model->paginate(10);
+    $data = $this->model->paginate($limit = 10);
     $pager = $this->model->pager;
 
     if (!$data)
@@ -23,8 +23,13 @@ class File extends ResourceController
       'messages'  => array(
         'success' => 'OK'
       ),
+      'meta'      => array(
+        'current-page'  => $pager->getCurrentPage(),
+        'per-page'      => $limit,
+        'total'         => $pager->getTotal(),
+        'last-page'     => $pager->getPageCount(),
+      ),
       'data'      => $data,
-      'pager'     => $pager,
     );
 
     return $this->respond($response);
@@ -57,39 +62,31 @@ class File extends ResourceController
 
     try {
       $path = upload($file);
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
       return $this->fail($e->getMessage());
     }
 
-    ############3
-
-    $data = (object) [
+    $data = (object) array(
       'name'  => $file->getName(),
       'path'  => $path,
-    ];
+    );
 
-    if ($this->model->insert($data))  # Validation successfully
-    {
-      $data->id = $this->model->getInsertID();
-      $data->path = base_url($data->path);
+    if (!$this->model->insert($data))
+      return $this->fail($this->model->errors());
 
-      $response = array(
-        'status'    => 201,
-        'error'     => false,
-        'messages'  => array(
-          'success' => 'Successfully created'
-        ),
-        'data'      => $data,
-      );
+    $data->id = $this->model->getInsertID();
+    $data->path = base_url($data->path);
 
-      return $this->respondCreated($response);
-    }
-    else # Validation fail
-    {
-      $errors = $this->model->errors();
-      return $this->fail($errors);
-    }
+    $response = array(
+      'status'    => 201,
+      'error'     => false,
+      'messages'  => array(
+        'success' => 'Successfully created'
+      ),
+      'data'      => $data,
+    );
+
+    return $this->respondCreated($response);
   }
 
   public function update($id = null)
@@ -101,28 +98,23 @@ class File extends ResourceController
 
     $body = $this->request->getJSON();
 
-    $data = (object) [
+    $data = (object) array(
       'id'    => $id,
       'name'  => $body->name,
-    ];
+    );
 
-    if ($this->model->save($data)) # Validation successfully
-    {
-      $response = array(
-        'status'    => 200,
-        'error'     => false,
-        'messages'  => array(
-          'success' => 'Successfully updated'
-        ),
-      );
+    if (!$this->model->save($data))
+      return $this->fail($this->model->errors());
 
-      return $this->respond($response);
-    }
-    else # Validation fail
-    {
-      $errors = $this->model->errors();
-      return $this->fail($errors);
-    }
+    $response = array(
+      'status'    => 200,
+      'error'     => false,
+      'messages'  => array(
+        'success' => 'Successfully updated'
+      ),
+    );
+
+    return $this->respond($response);
   }
 
   public function delete($id = null)

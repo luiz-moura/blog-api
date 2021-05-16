@@ -24,8 +24,7 @@ class Auth extends \App\Controllers\BaseController
     ];
 
     $input = $this->getRequestInput($this->request);
-    if (!$this->validateRequest($input, $rules))
-    {
+    if (!$this->validateRequest($input, $rules)) {
       return $this->getResponse(
         $this->validator->getErrors(),
         ResponseInterface::HTTP_BAD_REQUEST
@@ -60,8 +59,7 @@ class Auth extends \App\Controllers\BaseController
 
     $input = $this->getRequestInput($this->request);
 
-    if (!$this->validateRequest($input, $rules, $errors))
-    {
+    if (!$this->validateRequest($input, $rules, $errors)) {
       return $this->getResponse(
         $this->validator->getErrors(),
         ResponseInterface::HTTP_BAD_REQUEST
@@ -85,9 +83,7 @@ class Auth extends \App\Controllers\BaseController
         // 'user' => $user,
         'access_token' => getSignedJWTForUser($emailAddress)
       ]);
-    }
-    catch (Exception $exception)
-    {
+    } catch (Exception $exception) {
       return $this->getResponse(['error' => $exception->getMessage()], $responseCode);
     }
   }

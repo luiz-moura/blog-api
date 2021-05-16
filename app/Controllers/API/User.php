@@ -11,7 +11,9 @@ class User extends ResourceController
 
   public function index()
   {
-    $data = $this->model->paginate(10);
+    $data = $this->model
+      ->select('id, role, avatar, first_name, last_name, status')
+      ->paginate($limit = 10);
     $pager = $this->model->pager;
 
     if (!$data)
@@ -23,8 +25,13 @@ class User extends ResourceController
       'messages'  => array(
         'success' => 'OK'
       ),
+      'meta'      => array(
+        'current-page'  => $pager->getCurrentPage(),
+        'per-page'      => $limit,
+        'total'         => $pager->getTotal(),
+        'last-page'     => $pager->getPageCount(),
+      ),
       'data'      => $data,
-      'pager'     => $pager,
     );
 
     return $this->respond($response);
@@ -32,7 +39,14 @@ class User extends ResourceController
 
   public function show($id = null)
   {
-    $data = $this->model->find($id);
+    if (isset($request->user) && $request->user->id == $id)
+      $data = $this->model
+        ->select('id, role, avatar, first_name, last_name, status')
+        ->find($id);
+    else
+      $data = $this->request->user;
+      unset($data->password);
+      unset($data->activation_code);
 
     if (!$data)
       return $this->failNotFound('No data found with id ' . $id);
@@ -58,32 +72,27 @@ class User extends ResourceController
     $hashCode = random_string('alnum', 16);
     $body->activation_code = $hashCode;
 
-    if ($this->model->insert($body))  # Validation successfully
-    {
-      # Confirmation Code
-      $subject = '🚀 Boas vindas ao AnyCode';
-      $url = base_url($hashCode);
-      $message = 'Clique no link abaixo para confirmar sua conta<br/>' . $url;
-      sendEmail($body->email, $subject, $message);
+    if (!$this->model->insert($body))
+      return $this->fail($this->model->errors());
 
-      $data = array('id' => $this->model->getInsertID());
+    # Confirmation Code
+    $subject = '🚀 Boas vindas ao AnyCode';
+    $url = base_url($hashCode);
+    $message = 'Clique no link abaixo para confirmar sua conta<br/>' . $url;
+    sendEmail($body->email, $subject, $message);
 
-      $response = array(
-        'status'    => 201,
-        'error'     => false,
-        'messages'  => array(
-          'success' => 'Successfully created'
-        ),
-        'data'      => $data,
-      );
+    $data = array('id' => $this->model->getInsertID());
 
-      return $this->respondCreated($response);
-    }
-    else # Validation fail
-    {
-      $errors = $this->model->errors();
-      return $this->fail($errors);
-    }
+    $response = array(
+      'status'    => 201,
+      'error'     => false,
+      'messages'  => array(
+        'success' => 'Successfully created'
+      ),
+      'data'      => $data,
+    );
+
+    return $this->respondCreated($response);
   }
 
   public function update($id = null)
@@ -96,23 +105,18 @@ class User extends ResourceController
     $body = $this->request->getJSON();
     $body->id = $id;
 
-    if ($this->model->save($body)) # Validation successfully
-    {
-      $response = array(
-        'status'    => 200,
-        'error'     => false,
-        'messages'  => array(
-          'success' => 'Successfully updated'
-        ),
-      );
+    if (!$this->model->save($body))
+      return $this->fail($this->model->errors());
 
-      return $this->respond($response);
-    }
-    else # Validation fail
-    {
-      $errors = $this->model->errors();
-      return $this->fail($errors);
-    }
+    $response = array(
+      'status'    => 200,
+      'error'     => false,
+      'messages'  => array(
+        'success' => 'Successfully updated'
+      ),
+    );
+
+    return $this->respond($response);
   }
 
   public function delete($id = null)
