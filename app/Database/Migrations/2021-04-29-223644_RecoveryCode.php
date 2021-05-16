@@ -23,6 +23,7 @@ class RecoveryCode extends Migration
 			'code'					    => [
 				'type'           		=> 'VARCHAR',
 				'constraint'     		=> 20,
+        'unique'         	=> true,
 			],
       'expiration'				=> [
 				'type'           		=> 'DATETIME',

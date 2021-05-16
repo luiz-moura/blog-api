@@ -26,7 +26,7 @@ class RecoveryCodeModel extends Model
 	// Validation
 	protected $validationRules      = [
     'user'            => 'required|integer',
-    'code'            => 'required|string|max_length[20]',
+    'code'            => 'required|string|is_unique[recovery_codes.code,id,{id}]|max_length[20]',
     'expiration'      => 'permit_empty|valid_date',
     'status'          => 'permit_empty|alpha',
   ];
