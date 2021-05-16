@@ -16,6 +16,7 @@ class PermissionModel extends Model
 	protected $protectFields        = true;
 	protected $allowedFields        = [
     'role',
+    'key',
     'name',
     'allowed',
     'create',
@@ -35,6 +36,7 @@ class PermissionModel extends Model
 	protected $validationRules      = [
     'role'            => 'required|integer',
     'name'            => 'required|string|is_unique[permissions.name,id,{id}]|min_length[3]|max_length[45]',
+    'key'             => 'required|string|is_unique[permissions.key,id,{id}]|min_length[3]|max_length[45]',
     'allowed'         => 'permit_empty|integer',
     'create'          => 'permit_empty|integer',
     'read'            => 'permit_empty|integer',

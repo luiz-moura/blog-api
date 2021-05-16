@@ -25,6 +25,11 @@ class Permissions extends Migration
 				'constraint'			=> 45,
         'unique'          => true,
 			],
+      'key'				  => [
+				'type'						=> 'VARCHAR',
+				'constraint'			=> 45,
+        'unique'          => true,
+			],
 			'allowed'	=> [
 				'type'						=> 'BIT',
 			],
