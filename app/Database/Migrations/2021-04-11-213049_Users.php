@@ -27,12 +27,6 @@ class Users extends Migration
 				'unsigned'       		=> true,
         'null'              => true,
 			],
-			'default_shipping'	=> [
-				'type'           		=> 'INT',
-				'constraint'     		=> 5,
-				'unsigned'       		=> true,
-        'null'              => true,
-			],
 			'first_name'				=> [
 				'type'           		=> 'VARCHAR',
 				'constraint'     		=> 45,
@@ -45,17 +39,24 @@ class Users extends Migration
 				'type'           		=>'VARCHAR',
 				'constraint'     		=> 20,
         'unique'         		=> true,
+        'null'              => true,
 			],
 			'birth_date'				=> [
 				'type'           		=> 'DATE',
+        'null'              => true,
 			],
 			'gender'						=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['M', 'F'],
+        // MYSQL
+				// 'type'           		=> 'ENUM',
+				// 'constraint'     		=> ['M', 'F'],
+        // PGSQL
+        'type'              => 'gender',
+        'null'              => true,
 			],
 			'phone'							=> [
 				'type'           		=> 'VARCHAR',
 				'constraint'		 		=> 20,
+        'null'              => true,
 			],
 			'email'							=> [
 				'type'           		=> 'VARCHAR',
@@ -72,8 +73,11 @@ class Users extends Migration
 				'null'           		=> true,
 			],
 			'status'						=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['active', 'inactive', 'pending'],
+        // MYSQL
+				// 'type'           		=> 'ENUM',
+				// 'constraint'     		=> ['active', 'inactive', 'pending'],
+        // PGSQL
+        'type'           		=> 'status_with_pending',
 				'default'        		=> 'pending',
 			],
 			'created_at'				=> [
@@ -90,7 +94,6 @@ class Users extends Migration
 		$this->forge->addPrimaryKey('id');
 		$this->forge->addForeignKey('role', 'roles', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->addForeignKey('avatar', 'files', 'id', 'CASCADE', 'CASCADE');
-		$this->forge->addForeignKey('default_shipping', 'adresses', 'id', 'CASCADE', 'CASCADE');
 		$this->forge->createTable('users');
 	}
 

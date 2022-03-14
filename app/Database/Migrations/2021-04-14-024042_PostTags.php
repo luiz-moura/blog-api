@@ -29,9 +29,12 @@ class PostTags extends Migration
 				'unique'         		=> true,
 			],
 			'status'						=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['active', 'inactive', 'pending'],
-				'default'        		=> 'pending',
+				// MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'			=> ['active', 'inactive'],
+        // PGSQL
+        'type'						=> 'status_active',
+				'default'					=> 'active',
 			],
 			'created_at'				=> [
 				'type'							=> 'DATETIME',

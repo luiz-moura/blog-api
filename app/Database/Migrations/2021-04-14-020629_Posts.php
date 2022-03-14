@@ -42,8 +42,12 @@ class Posts extends Migration
 				'type'           		=>'text',
 			],
 			'type'							=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['post', 'page'],
+        // MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'    	=> ['post', 'page'],
+        // PGSQL
+        'type'						=> 'post_type',
+				'default'					=> 'post',
 			],
 			'slug'							=> [
 				'type'           		=> 'VARCHAR',
@@ -51,13 +55,20 @@ class Posts extends Migration
 				'unique'         		=> true,
 			],
       'comments_status'		=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['active', 'inactive'],
+        // MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'			=> ['active', 'inactive'],
+        // PGSQL
+        'type'						=> 'status_active',
+				'default'					=> 'active',
 			],
 			'status'						=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['active', 'inactive', 'pending'],
-				'default'        		=> 'pending',
+				// MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'			=> ['active', 'inactive', 'pending'],
+        // PGSQL
+        'type'						=> 'status_with_pending',
+				'default'					=> 'active',
 			],
 			'created_at'				=> [
 				'type'							=> 'DATETIME',

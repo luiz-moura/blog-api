@@ -41,9 +41,12 @@ class PostComments extends Migration
 				'unique'         		=> true,
 			],
       'status'						=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['approved', 'pending', 'spam'],
-				'default'        		=> 'pending',
+        // MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'			=> ['approved', 'pending', 'spam'],
+        // PGSQL
+        'type'						=> 'status_comment',
+				'default'					=> 'pending',
 			],
 			'created_at'				=> [
 				'type'							=> 'DATETIME',

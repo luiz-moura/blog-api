@@ -40,12 +40,12 @@ class UserModel extends Model
 
 	// Validation
 	protected $validationRules      = [
-    'role'              => 'required|integer',
+    'role'              => 'permit_empty|integer',
     'avatar'            => 'permit_empty|integer',
     'default_shipping'  => 'permit_empty|integer',
     'first_name'        => 'required|string|min_length[2]|max_length[45]',
     'last_name'         => 'required|string|min_length[2]|max_length[45]',
-    'cpf'               => 'required|string|is_unique[users.cpf,id,{id}]|max_length[20]',
+    'cpf'               => 'permit_empty|string|is_unique[users.cpf,id,{id}]|max_length[20]',
     'birth_date'        => 'permit_empty|valid_date',
     'gender'            => 'permit_empty|alpha',
     'phone'             => 'permit_empty|string|max_length[20]',
@@ -55,6 +55,7 @@ class UserModel extends Model
     'pass_confirm'      => 'required_with[password]|matches[password]',
     'status'            => 'permit_empty|alpha',
   ];
+
 	protected $validationMessages   = [];
 	protected $skipValidation       = false;
 	protected $cleanValidationRules = true;
@@ -71,36 +72,36 @@ class UserModel extends Model
 	protected $afterDelete          = [];
 
   protected function beforeInsert(array $data): array
-    {
-        return $this->getUpdatedDataWithHashedPassword($data);
-    }
+  {
+    return $this->getUpdatedDataWithHashedPassword($data);
+  }
 
-    protected function beforeUpdate(array $data): array
-    {
-        return $this->getUpdatedDataWithHashedPassword($data);
-    }
+  protected function beforeUpdate(array $data): array
+  {
+    return $this->getUpdatedDataWithHashedPassword($data);
+  }
 
-    private function getUpdatedDataWithHashedPassword(array $data): array
-    {
-        if (isset($data['data']['password'])) {
-            $plaintextPassword = $data['data']['password'];
-            $data['data']['password'] = $this->hashPassword($plaintextPassword);
-        }
-        return $data;
+  private function getUpdatedDataWithHashedPassword(array $data): array
+  {
+    if (isset($data['data']['password'])) {
+      $plaintextPassword = $data['data']['password'];
+      $data['data']['password'] = $this->hashPassword($plaintextPassword);
     }
+    return $data;
+  }
 
-    private function hashPassword(string $plaintextPassword): string
-    {
-        return password_hash($plaintextPassword, PASSWORD_BCRYPT);
-    }
+  private function hashPassword(string $plaintextPassword): string
+  {
+    return password_hash($plaintextPassword, PASSWORD_BCRYPT);
+  }
 
-  // Custom
   public function findUserByEmail(string $email)
   {
     $user = $this->where(array('email' => $email))->asObject()->first();
 
-    if (!$user)
+    if (!$user) {
       throw new Exception('User does not exist for specified email address');
+    }
 
     return $user;
   }

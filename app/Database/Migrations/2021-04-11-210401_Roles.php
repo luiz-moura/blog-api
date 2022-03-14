@@ -25,8 +25,11 @@ class Roles extends Migration
 				'constraint'			=> 135,
 			],
 			'status'			=> [
-				'type'						=> 'ENUM',
-				'constraint'			=> ['active', 'inactive'],
+				// MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'			=> ['active', 'inactive'],
+        // PGSQL
+        'type'						=> 'status_active',
 				'default'					=> 'active',
 			],
 			'created_at'	=> [

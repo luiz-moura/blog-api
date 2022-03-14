@@ -38,10 +38,13 @@ class MenuPages extends Migration
 				'type'           		=>'VARCHAR',
 				'constraint'     		=> 45,
 			],
-      'status'						=> [
-				'type'           		=> 'ENUM',
-				'constraint'     		=> ['active', 'inactive'],
-				'default'        		=> 'active',
+      'status'			=> [
+				// MYSQL
+				// 'type'						=> 'ENUM',
+				// 'constraint'			=> ['active', 'inactive'],
+        // PGSQL
+        'type'						=> 'status_active',
+				'default'					=> 'active',
 			],
 			'created_at'				=> [
 				'type'							=> 'DATETIME',
