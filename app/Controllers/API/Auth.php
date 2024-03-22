@@ -10,81 +10,82 @@ use ReflectionException;
 
 class Auth extends \App\Controllers\BaseController
 {
-  /**
-   * Register a new user
-   * @return Response
-   * @throws ReflectionException
-   */
-  public function register()
-  {
-    $rules = [
-      'name' => 'required',
-      'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[user.email]',
-      'password' => 'required|min_length[8]|max_length[255]'
-    ];
+    /**
+     * Register a new user.
+     * @return Response
+     * @throws ReflectionException
+     */
+    public function register()
+    {
+        $rules = [
+            'name' => 'required',
+            'email' => 'required|min_length[6]|max_length[50]|valid_email|is_unique[user.email]',
+            'password' => 'required|min_length[8]|max_length[255]',
+        ];
 
-    $input = $this->getRequestInput($this->request);
-    if (!$this->validateRequest($input, $rules)) {
-      return $this->getResponse(
-        $this->validator->getErrors(),
-        ResponseInterface::HTTP_BAD_REQUEST
-      );
+        $input = $this->getRequestInput($this->request);
+        if (!$this->validateRequest($input, $rules)) {
+            return $this->getResponse(
+                $this->validator->getErrors(),
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
+
+        $userModel = new UserModel();
+        $userModel->save($input);
+
+        return $this->getJWTForUser(
+            $input['email'],
+            ResponseInterface::HTTP_CREATED
+        );
     }
 
-    $userModel = new UserModel();
-    $userModel->save($input);
+    /**
+     * Authenticate Existing User.
+     * @return Response
+     */
+    public function login()
+    {
+        $rules = [
+            'email' => 'required|min_length[6]|max_length[50]|valid_email',
+            'password' => 'required|min_length[6]|max_length[255]|validateUser[email, password]',
+        ];
 
-    return $this ->getJWTForUser(
-      $input['email'],
-      ResponseInterface::HTTP_CREATED
-    );
-  }
+        $errors = [
+            'password' => [
+                'validateUser' => 'Invalid login credentials provided',
+            ],
+        ];
 
-  /**
-   * Authenticate Existing User
-   * @return Response
-   */
-  public function login()
-  {
-    $rules = [
-      'email' => 'required|min_length[6]|max_length[50]|valid_email',
-      'password' => 'required|min_length[6]|max_length[255]|validateUser[email, password]'
-    ];
+        $input = $this->getRequestInput($this->request);
 
-    $errors = [
-      'password' => [
-        'validateUser' => 'Invalid login credentials provided'
-      ]
-    ];
+        if (!$this->validateRequest($input, $rules, $errors)) {
+            return $this->getResponse(
+                $this->validator->getErrors(),
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
 
-    $input = $this->getRequestInput($this->request);
-
-    if (!$this->validateRequest($input, $rules, $errors)) {
-      return $this->getResponse(
-        $this->validator->getErrors(),
-        ResponseInterface::HTTP_BAD_REQUEST
-      );
+        return $this->getJWTForUser($input['email']);
     }
-    return $this->getJWTForUser($input['email']);
-  }
 
-  private function getJWTForUser(string $emailAddress,int $responseCode = ResponseInterface::HTTP_OK)
-  {
-    try {
-      $model = new UserModel();
-      $user = $model->findUserByEmail($emailAddress);
+    private function getJWTForUser(string $emailAddress, int $responseCode = ResponseInterface::HTTP_OK)
+    {
+        try {
+            $model = new UserModel();
+            $user = $model->findUserByEmail($emailAddress);
 
-      helper('jwt');
+            helper('jwt');
 
-      return $this->getResponse([
-        'messages'  => array(
-          'success' => 'User authenticated successfully',
-        ),
-        // 'user' => $user,
-        'access_token' => getSignedJWTForUser($emailAddress)
-      ]);
-    } catch (Exception $exception) {
-      return $this->getResponse(['error' => $exception->getMessage()], $responseCode);
+            return $this->getResponse([
+                'messages' => [
+                    'success' => 'User authenticated successfully',
+                ],
+                // 'user' => $user,
+                'access_token' => getSignedJWTForUser($emailAddress),
+            ]);
+        } catch (Exception $exception) {
+            return $this->getResponse(['error' => $exception->getMessage()], $responseCode);
+        }
     }
-  }
 }

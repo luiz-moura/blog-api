@@ -1,8 +1,7 @@
 <?php
 
-
 /**
- * CodeIgniter
+ * CodeIgniter.
  *
  * An open source application development framework for PHP
  *
@@ -29,11 +28,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package    CodeIgniter
  * @author     CodeIgniter Dev Team
  * @copyright  2019-2021 CodeIgniter Foundation
  * @license    https://opensource.org/licenses/MIT	MIT License
- * @link       https://codeigniter.com
+ * @see       https://codeigniter.com
  * @since      Version 4.0.0
  * @filesource
  */
@@ -41,7 +39,7 @@
 namespace Tests\Support\Libraries;
 
 /**
- * Class ConfigReader
+ * Class ConfigReader.
  *
  * An extension of BaseConfig that prevents the constructor from
  * loading external values. Used to read actual local values from
@@ -49,7 +47,7 @@ namespace Tests\Support\Libraries;
  */
 class ConfigReader extends \Config\App
 {
-	public function __construct()
-	{
-	}
+    public function __construct()
+    {
+    }
 }

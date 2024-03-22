@@ -6,134 +6,140 @@ use CodeIgniter\RESTful\ResourceController;
 
 class File extends ResourceController
 {
-  protected $modelName = 'App\Models\FileModel';
-  protected $format    = 'json';
+    protected $modelName = 'App\Models\FileModel';
+    protected $format = 'json';
 
-  public function index()
-  {
-    $data = $this->model->paginate($limit = 10);
-    $pager = $this->model->pager;
+    public function index()
+    {
+        $data = $this->model->paginate($limit = 10);
+        $pager = $this->model->pager;
 
-    if (!$data)
-      return $this->respondNoContent();
+        if (!$data) {
+            return $this->respondNoContent();
+        }
 
-    $response = array(
-      'status'    => 200,
-      'error'     => false,
-      'messages'  => array(
-        'success' => 'OK'
-      ),
-      'meta'      => array(
-        'current-page'  => $pager->getCurrentPage(),
-        'per-page'      => $limit,
-        'total'         => $pager->getTotal(),
-        'last-page'     => $pager->getPageCount(),
-      ),
-      'data'      => $data,
-    );
+        $response = [
+            'status' => 200,
+            'error' => false,
+            'messages' => [
+                'success' => 'OK',
+            ],
+            'meta' => [
+                'current-page' => $pager->getCurrentPage(),
+                'per-page' => $limit,
+                'total' => $pager->getTotal(),
+                'last-page' => $pager->getPageCount(),
+            ],
+            'data' => $data,
+        ];
 
-    return $this->respond($response);
-  }
-
-  public function show($id = null)
-  {
-    $data = $this->model->find($id);
-
-    if (!$data)
-      return $this->failNotFound('No data found with id ' . $id);
-
-    $response = array(
-      'status'    => 200,
-      'error'     => false,
-      'messages'  => array(
-        'success' => 'OK'
-      ),
-      'data'      => $data,
-    );
-
-    return $this->respond($response);
-  }
-
-  public function create()
-  {
-    helper('upload');
-
-    $file = $this->request->getFile('file');
-
-    try {
-      $path = upload($file);
-    } catch (Exception $e) {
-      return $this->fail($e->getMessage());
+        return $this->respond($response);
     }
 
-    $data = (object) array(
-      'name'  => $file->getName(),
-      'path'  => $path,
-    );
+    public function show($id = null)
+    {
+        $data = $this->model->find($id);
 
-    if (!$this->model->insert($data))
-      return $this->fail($this->model->errors());
+        if (!$data) {
+            return $this->failNotFound('No data found with id '.$id);
+        }
 
-    $data->id = $this->model->getInsertID();
-    $data->path = base_url($data->path);
+        $response = [
+            'status' => 200,
+            'error' => false,
+            'messages' => [
+                'success' => 'OK',
+            ],
+            'data' => $data,
+        ];
 
-    $response = array(
-      'status'    => 201,
-      'error'     => false,
-      'messages'  => array(
-        'success' => 'Successfully created'
-      ),
-      'data'      => $data,
-    );
+        return $this->respond($response);
+    }
 
-    return $this->respondCreated($response);
-  }
+    public function create()
+    {
+        helper('upload');
 
-  public function update($id = null)
-  {
-    $data = $this->model->where('id', $id)->first();
+        $file = $this->request->getFile('file');
 
-    if (!$data)
-      return $this->failNotFound('No data found');
+        try {
+            $path = upload($file);
+        } catch (Exception $e) {
+            return $this->fail($e->getMessage());
+        }
 
-    $body = $this->request->getJSON();
+        $data = (object) [
+            'name' => $file->getName(),
+            'path' => $path,
+        ];
 
-    $data = (object) array(
-      'id'    => $id,
-      'name'  => $body->name,
-    );
+        if (!$this->model->insert($data)) {
+            return $this->fail($this->model->errors());
+        }
 
-    if (!$this->model->save($data))
-      return $this->fail($this->model->errors());
+        $data->id = $this->model->getInsertID();
+        $data->path = base_url($data->path);
 
-    $response = array(
-      'status'    => 200,
-      'error'     => false,
-      'messages'  => array(
-        'success' => 'Successfully updated'
-      ),
-    );
+        $response = [
+            'status' => 201,
+            'error' => false,
+            'messages' => [
+                'success' => 'Successfully created',
+            ],
+            'data' => $data,
+        ];
 
-    return $this->respond($response);
-  }
+        return $this->respondCreated($response);
+    }
 
-  public function delete($id = null)
-  {
-    $data = $this->model->where('id', $id)->first();
+    public function update($id = null)
+    {
+        $data = $this->model->where('id', $id)->first();
 
-    if (!$data)
-      return $this->failNotFound('No data found');
+        if (!$data) {
+            return $this->failNotFound('No data found');
+        }
 
-    $this->model->delete($id);
+        $body = $this->request->getJSON();
 
-    $response = array(
-      'status'    => 200,
-      'error'     => false,
-      'messages'  => array(
-        'success' => 'Successfully deleted'
-      ),
-    );
+        $data = (object) [
+            'id' => $id,
+            'name' => $body->name,
+        ];
 
-    return $this->respondDeleted($response);
-  }
+        if (!$this->model->save($data)) {
+            return $this->fail($this->model->errors());
+        }
+
+        $response = [
+            'status' => 200,
+            'error' => false,
+            'messages' => [
+                'success' => 'Successfully updated',
+            ],
+        ];
+
+        return $this->respond($response);
+    }
+
+    public function delete($id = null)
+    {
+        $data = $this->model->where('id', $id)->first();
+
+        if (!$data) {
+            return $this->failNotFound('No data found');
+        }
+
+        $this->model->delete($id);
+
+        $response = [
+            'status' => 200,
+            'error' => false,
+            'messages' => [
+                'success' => 'Successfully deleted',
+            ],
+        ];
+
+        return $this->respondDeleted($response);
+    }
 }

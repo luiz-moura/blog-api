@@ -11,31 +11,28 @@ use Exception;
 
 class JWTAuthenticationFilter implements FilterInterface
 {
-  use ResponseTrait;
+    use ResponseTrait;
 
-  public function before(RequestInterface $request, $arguments = null)
-  {
-    $authenticationHeader = $request->getServer('HTTP_AUTHORIZATION');
-
-    try
+    public function before(RequestInterface $request, $arguments = null)
     {
-      helper('jwt');
-      $encodedToken = getJWTFromRequest($authenticationHeader);
+        $authenticationHeader = $request->getServer('HTTP_AUTHORIZATION');
 
-      $user = validateJWTFromRequest($encodedToken);
-      $request->user = $user;
+        try {
+            helper('jwt');
+            $encodedToken = getJWTFromRequest($authenticationHeader);
 
-      return $request;
+            $user = validateJWTFromRequest($encodedToken);
+            $request->user = $user;
+
+            return $request;
+        } catch (Exception $e) {
+            return Services::response()
+                ->setJSON(['error' => $e->getMessage()])
+                ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
+        }
     }
-    catch (Exception $e)
+
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-      return Services::response()
-        ->setJSON(['error' => $e->getMessage()])
-        ->setStatusCode(ResponseInterface::HTTP_UNAUTHORIZED);
     }
-  }
-
-  public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-  {
-  }
 }

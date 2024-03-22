@@ -6,18 +6,18 @@ use CodeIgniter\Database\Seeder;
 
 class CompanySeeder extends Seeder
 {
-	public function run()
-	{
-		$model = model('CompanyModel');
+    public function run()
+    {
+        $model = model('CompanyModel');
 
-    $data = [
-      [
-        'name'          => 'AnyCode',
-        'description'   => 'AnyCode description',
-        'email'         => 'anycodesuport@gmail.com',
-      ],
-    ];
+        $data = [
+            [
+                'name' => 'AnyCode',
+                'description' => 'AnyCode description',
+                'email' => 'anycodesuport@gmail.com',
+            ],
+        ];
 
-    $model->insertBatch($data);
-	}
+        $model->insertBatch($data);
+    }
 }
