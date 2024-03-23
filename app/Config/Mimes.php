@@ -15,15 +15,15 @@ namespace Config;
  *
  * When working with mime types, please make sure you have the ´fileinfo´
  * extension enabled to reliably detect the media types.
+ *
+ * @immutable
  */
 class Mimes
 {
     /**
      * Map of extensions to mime types.
-     *
-     * @var array
      */
-    public static $mimes = [
+    public static array $mimes = [
         'hqx' => [
             'application/mac-binhex40',
             'application/mac-binhex',
@@ -55,6 +55,8 @@ class Mimes
         'lzh' => 'application/octet-stream',
         'exe' => [
             'application/octet-stream',
+            'application/vnd.microsoft.portable-executable',
+            'application/x-dosexec',
             'application/x-msdownload',
         ],
         'class' => 'application/octet-stream',
@@ -102,8 +104,6 @@ class Mimes
         ],
         'pptx' => [
             'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'application/x-zip',
-            'application/zip',
         ],
         'wbxml' => 'application/wbxml',
         'wmlc' => 'application/wmlc',
@@ -260,6 +260,7 @@ class Mimes
             'image/png',
             'image/x-png',
         ],
+        'webp' => 'image/webp',
         'tif' => 'image/tiff',
         'tiff' => 'image/tiff',
         'css' => [
@@ -334,6 +335,8 @@ class Mimes
             'application/msword',
             'application/x-zip',
         ],
+        'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+        'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12',
         'word' => [
             'application/msword',
             'application/octet-stream',
@@ -483,8 +486,6 @@ class Mimes
     /**
      * Attempts to determine the best mime type for the given file extension.
      *
-     * @param string $extension
-     *
      * @return string|null the mime type found, or none if unable to determine
      */
     public static function guessTypeFromExtension(string $extension)
@@ -501,7 +502,6 @@ class Mimes
     /**
      * Attempts to determine the best file extension for a given mime type.
      *
-     * @param string      $type
      * @param string|null $proposedExtension - default extension (in case there is more than one with the same mime type)
      *
      * @return string|null the extension determined, or null if unable to match
@@ -510,24 +510,25 @@ class Mimes
     {
         $type = trim(mb_strtolower($type), '. ');
 
-        $proposedExtension = trim(mb_strtolower($proposedExtension));
+        $proposedExtension = trim(mb_strtolower($proposedExtension ?? ''));
 
-        if ('' !== $proposedExtension) {
-            if (array_key_exists($proposedExtension, static::$mimes) && in_array($type, is_string(static::$mimes[$proposedExtension]) ? [static::$mimes[$proposedExtension]] : static::$mimes[$proposedExtension], true)) {
-                // The detected mime type matches with the proposed extension.
-                return $proposedExtension;
-            }
-
-            // An extension was proposed, but the media type does not match the mime type list.
-            return;
+        if (
+            '' !== $proposedExtension
+            && array_key_exists($proposedExtension, static::$mimes)
+            && in_array($type, (array) static::$mimes[$proposedExtension], true)
+        ) {
+            // The detected mime type matches with the proposed extension.
+            return $proposedExtension;
         }
 
         // Reverse check the mime type list if no extension was proposed.
         // This search is order sensitive!
         foreach (static::$mimes as $ext => $types) {
-            if ((is_string($types) && $types === $type) || (is_array($types) && in_array($type, $types, true))) {
+            if (in_array($type, (array) $types, true)) {
                 return $ext;
             }
         }
+
+        return null;
     }
 }

@@ -1,24 +1,24 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="robots" content="noindex">
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
 
-	<title>Whoops!</title>
+    <title><?php echo lang('Errors.whoops'); ?></title>
 
-	<style type="text/css">
-		<?php echo preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'debug.css')); ?>
-	</style>
+    <style>
+        <?php echo preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'debug.css')); ?>
+    </style>
 </head>
 <body>
 
-	<div class="container text-center">
+    <div class="container text-center">
 
-		<h1 class="headline">Whoops!</h1>
+        <h1 class="headline"><?php echo lang('Errors.whoops'); ?></h1>
 
-		<p class="lead">We seem to have hit a snag. Please try again later...</p>
+        <p class="lead"><?php echo lang('Errors.weHitASnag'); ?></p>
 
-	</div>
+    </div>
 
 </body>
 

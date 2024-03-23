@@ -1,19 +1,19 @@
 <?php
 
+use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\DatabaseTestTrait;
+use Tests\Support\Database\Seeds\ExampleSeeder;
 use Tests\Support\Models\ExampleModel;
 
 /**
  * @internal
  * @coversNothing
  */
-class ExampleDatabaseTest extends Tests\Support\DatabaseTestCase
+final class ExampleDatabaseTest extends CIUnitTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
+    use DatabaseTestTrait;
 
-        // Extra code to run before each test
-    }
+    protected $seed = ExampleSeeder::class;
 
     public function testModelFindAll()
     {
@@ -32,6 +32,7 @@ class ExampleDatabaseTest extends Tests\Support\DatabaseTestCase
         $this->setPrivateProperty($model, 'useSoftDeletes', true);
         $this->setPrivateProperty($model, 'tempUseSoftDeletes', true);
 
+        /** @var stdClass $object */
         $object = $model->first();
         $model->delete($object->id);
 
