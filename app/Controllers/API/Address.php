@@ -2,126 +2,92 @@
 
 namespace App\Controllers\API;
 
+use App\Models\AddressModel;
+use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
 
 class Address extends ResourceController
 {
-    protected $modelName = 'App\Models\AddressModel';
+    protected AddressModel $modelName = AddressModel::class;
     protected $format = 'json';
 
     public function index()
     {
-        $data = $this->model->paginate($limit = 10);
-        $pager = $this->model->pager;
+        $addresses = $this->model->paginate($perPage = 10);
 
-        if (!$data) {
+        if (!$addresses) {
             return $this->respondNoContent();
         }
 
-        $response = [
-            'status' => 200,
-            'error' => false,
-            'messages' => [
-                'success' => 'OK',
-            ],
+        return $this->respond([
             'meta' => [
-                'current-page' => $pager->getCurrentPage(),
-                'per-page' => $limit,
-                'total' => $pager->getTotal(),
-                'last-page' => $pager->getPageCount(),
+                'per-page' => $perPage,
+                'current-page' => $this->model->pager->getCurrentPage(),
+                'total' => $this->model->pager->getTotal(),
+                'last-page' => $this->model->pager->getPageCount(),
             ],
-            'data' => $data,
-        ];
-
-        return $this->respond($response);
+            'data' => $addresses,
+        ]);
     }
 
     public function show($id = null)
     {
-        $data = $this->model->find($id);
+        $address = $this->model->find($id);
 
-        if (!$data) {
-            return $this->failNotFound('No data found with id '.$id);
+        if (!$address) {
+            return $this->failNotFound();
         }
 
-        $response = [
-            'status' => 200,
-            'error' => false,
-            'messages' => [
-                'success' => 'OK',
-            ],
-            'data' => $data,
-        ];
-
-        return $this->respond($response);
+        return $this->respond($address);
     }
 
     public function create()
     {
-        $body = $this->request->getJSON();
+        $request = $this->request->getJSON();
 
-        if (!$this->model->insert($body)) {
+        if (!$this->validate($request, $this->model->getValidationRules())) {
+            return $this->respond(
+                $this->validator->getErrors(),
+                ResponseInterface::HTTP_BAD_REQUEST
+            );
+        }
+
+        if (!$this->model->insert($request)) {
             return $this->fail($this->model->errors());
         }
 
-        $data = ['id' => $this->model->getInsertID()];
-
-        $response = [
-            'status' => 201,
-            'error' => false,
-            'messages' => [
-                'success' => 'Successfully created',
-            ],
-            'data' => $data,
-        ];
-
-        return $this->respondCreated($response);
+        return $this->respondCreated([
+            'id' => $this->model->getInsertID()
+        ]);
     }
 
     public function update($id = null)
     {
-        $data = $this->model->where('id', $id)->first();
+        $address = $this->model->where('id', $id)->first();
 
-        if (!$data) {
-            return $this->failNotFound('No data found');
+        if (!$address) {
+            return $this->failNotFound();
         }
 
-        $body = $this->request->getJSON();
-        $body->id = $id;
+        $request = $this->request->getJSON();
 
-        if (!$this->model->save($body)) {
+        if (!$this->model->update($id, $request)) {
             return $this->fail($this->model->errors());
         }
 
-        $response = [
-            'status' => 200,
-            'error' => false,
-            'messages' => [
-                'success' => 'Successfully updated',
-            ],
-        ];
-
-        return $this->respond($response);
+        return $this->respondNoContent();
     }
 
     public function delete($id = null)
     {
-        $data = $this->model->where('id', $id)->first();
+        $address = $this->model->where('id', $id)->first();
 
-        if (!$data) {
-            return $this->failNotFound('No data found');
+        if (!$address) {
+            return $this->failNotFound();
         }
 
         $this->model->delete($id);
 
-        $response = [
-            'status' => 200,
-            'error' => false,
-            'messages' => [
-                'success' => 'Successfully deleted',
-            ],
-        ];
-
-        return $this->respondDeleted($response);
+        return $this->respondDeleted();
     }
 }
